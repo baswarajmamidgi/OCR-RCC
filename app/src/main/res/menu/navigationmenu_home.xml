@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/accounts"
+            android:title="Register/Login"
+            android:icon="@drawable/ic_home"/>
+        <item
+            android:id="@+id/search"
+            android:icon="@drawable/ic_feedback"
+            android:title="Search"/>
+        <item
+            android:id="@+id/savedfiles"
+            android:icon="@drawable/ic_feedback"
+            android:title="Saved Files"/>
+
+
+        <item
+            android:id="@+id/forum"
+            android:icon="@drawable/ic_web_asset"
+            android:title="Forum"/>
+
+        <item
+            android:id="@+id/settings"
+            android:icon="@drawable/documents"
+            android:title="Settings" />
+
+        <item
+            android:id="@+id/notifications"
+            android:icon="@drawable/ic_account_circle"
+            android:title="Notification Settings"/>
+        <item
+            android:id="@+id/feedback"
+            android:icon="@drawable/ic_feedback"
+            android:title="Feedback"/>
+        <item
+            android:id="@+id/about"
+            android:title="About"/>
+
+
+    </group>
+
+</menu>

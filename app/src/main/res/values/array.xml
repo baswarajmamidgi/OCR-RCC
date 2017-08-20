@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="text_size">
+        <item >16</item>
+        <item >18</item>
+        <item >20</item>
+        <item >22</item>
+        <item >24</item>
+        <item >26</item>
+    </string-array>
+
+    <string-array name="text_color">
+        <item >Red</item>
+        <item >Blue</item>
+        <item >Green</item>
+        <item >Yellow</item>
+        <item >Black</item>
+    </string-array>
+    <string-array name="text_color_value">
+        <item >#FF0000</item>
+        <item >#0000FF</item>
+        <item >#00FF00</item>
+        <item >#FFFF00</item>
+        <item >#000000</item>
+    </string-array>
+
+
+</resources>

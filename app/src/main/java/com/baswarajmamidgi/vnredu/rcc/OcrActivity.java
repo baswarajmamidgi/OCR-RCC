@@ -69,7 +69,7 @@ public class OcrActivity extends AppCompatActivity  implements GoogleApiClient.C
     private Dialog dialog;
     private GridView gridView;
     private String toolbartitle;
-    TextView text_blocks;
+    private TextView text_blocks;
     private Bitmap originalbitmap;
     private ArrayList<String> wordsarray = new ArrayList<>();
     private GoogleApiClient mGoogleApiClient;
@@ -91,6 +91,13 @@ public class OcrActivity extends AppCompatActivity  implements GoogleApiClient.C
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
 
         Intent i = getIntent(); //receive data from camera activity
         path = i.getStringExtra("data");
@@ -193,16 +200,19 @@ public class OcrActivity extends AppCompatActivity  implements GoogleApiClient.C
 
                             }
                         });
-
-
                         break;
+
                     case R.id.make_pdf:
                         stringtopdf(blocks);
                         Toast.makeText(OcrActivity.this, "PDF created", Toast.LENGTH_SHORT).show();
                         break;
+
+
                     case R.id.share:
                         sharepdf();
                         break;
+
+
                     case R.id.upload:
                         saveFileToDrive();
                         break;
@@ -443,12 +453,14 @@ public class OcrActivity extends AppCompatActivity  implements GoogleApiClient.C
             boolean bool = folder.mkdir();
         }
         try {
-            file = new File(folder, "config.pdf");
+            file = new File(folder, toolbartitle.substring(0,toolbartitle.length()-4)+".pdf");
             file.createNewFile();
             FileOutputStream fOut = new FileOutputStream(file);
+
             PdfDocument document = new PdfDocument();
-            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(500, 800, 1).create();
+            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(2480, 3508, 1).create();
             PdfDocument.Page page = document.startPage(pageInfo);
+
             Canvas canvas = page.getCanvas();
             Paint paint = new Paint();
             canvas.drawText(data, 10, 10, paint);
@@ -456,31 +468,12 @@ public class OcrActivity extends AppCompatActivity  implements GoogleApiClient.C
             document.writeTo(fOut);
             document.close();
 
+
         } catch (IOException e) {
             Log.i("log error", e.getLocalizedMessage());
         }
 
         return file;
-        /*  final File file = new File(folder, "config.pdf");
-        try
-        {
-            file.createNewFile();
-            FileOutputStream fOut = new FileOutputStream(file);
-            OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
-            myOutWriter.append(data);
-
-            myOutWriter.close();
-
-            fOut.flush();
-            fOut.close();
-        }
-        catch (IOException e)
-        {
-            Log.e("Exception", "File write failed: " + e.toString());
-        }
-
-        */
-
     }
 
 

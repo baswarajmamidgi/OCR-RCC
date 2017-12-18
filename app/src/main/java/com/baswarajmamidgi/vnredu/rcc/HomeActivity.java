@@ -158,6 +158,8 @@ public class HomeActivity extends Activity
         }
     }
 
+
+
     private void myToggleSelection(int idx) {
         adapter.toggleSelection(idx);
         String title = getString(R.string.selected_count, adapter.getSelectedItemCount());
@@ -315,10 +317,14 @@ public class HomeActivity extends Activity
                 startActivity(new Intent(this, AppSettings.class));
                 break;
             }
+            case R.id.savedfiles:
+            {
+                startActivity(new Intent(this,SavedFiles.class));
+                break;
+            }
             case R.id.feedback: {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("mailto:" + "baswarajmamidgi10@gmail.com"));
-                intent.putExtra(Intent.EXTRA_SUBJECT, "Notes maker lite Feedback");
-                startActivity(intent);
+
+                startActivity(new Intent(this,Feedback.class));
                 break;
 
             }

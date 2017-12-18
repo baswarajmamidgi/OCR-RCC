@@ -53,6 +53,8 @@
         </activity>
         <activity android:name=".BarcodeCaptureActivity"/>
         <activity android:name=".AppSettings"/>
+        <activity android:name=".SavedFiles" />
+        <activity android:name=".Feedback" />
     </application>
 
 </manifest>

@@ -13,7 +13,8 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:theme="@style/toolbartheme" />
+        android:theme="@style/toolbartheme"
+        app:navigationIcon="@drawable/ic_arrow_back"/>
 
 
     <ImageView

@@ -35,17 +35,37 @@
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/camera"
-            android:layout_width="56dp"
-            android:layout_height="wrap_content"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:layout_gravity="top|left"
-            android:layout_marginLeft="340dp"
+            android:layout_marginLeft="335dp"
             android:layout_marginTop="520dp"
             android:clickable="true"
+            app:backgroundTint="@color/colorPrimary"
             app:fabSize="normal"
             app:layout_anchor="@+id/relativeLayout"
             app:layout_anchorGravity="bottom|right"
-            app:srcCompat="@android:drawable/ic_menu_camera"
+            app:srcCompat="@drawable/ocr_icon"
             tools:ignore="RtlHardcoded,UnknownId" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/barcode"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginLeft="335dp"
+            android:layout_marginTop="440dp"
+            android:clickable="true"
+            app:backgroundTint="@color/colorPrimary"
+            app:fabSize="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/capture"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.958"
+            app:srcCompat="@drawable/qr_icon" />
+
     </FrameLayout>
 
 

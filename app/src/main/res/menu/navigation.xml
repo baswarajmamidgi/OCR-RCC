@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:title="Save As"
+        android:icon="@drawable/ic_save"
+        android:id="@+id/saveas"/>
+    <item
+        android:title="Edit"
+        android:icon="@drawable/ic_mode_edit"
+        android:id="@+id/edit_text"/>
+    <item
+        android:title="Make PDF"
+        android:icon="@drawable/ic_picture_as_pdf"
+        android:id="@+id/make_pdf"/>
+    <item
+        android:title="Share"
+        android:icon="@drawable/ic_share"
+        android:id="@+id/share"/>
+    <item
+        android:title="Upload"
+        android:icon="@drawable/ic_cloud_upload"
+        android:id="@+id/upload"/>
+
+
+</menu>

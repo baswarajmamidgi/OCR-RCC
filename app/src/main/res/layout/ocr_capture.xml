@@ -65,35 +65,37 @@
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        app:backgroundTint="@color/colorPrimary"
         app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:srcCompat="@drawable/ic_camera"
-        app:useCompatPadding="true"
         app:layout_constraintTop_toTopOf="@+id/toolbar"
-        android:layout_marginTop="8dp"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintVertical_bias="0.979" />
+        app:layout_constraintVertical_bias="0.979"
+        app:srcCompat="@drawable/ic_camera_white_24dp"
+        app:useCompatPadding="true" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/barcode"
+        android:id="@+id/uploadfile"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
         android:clickable="true"
+        app:backgroundTint="@color/colorPrimary"
         app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/capture"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.958"
-        app:srcCompat="@drawable/barcode"
-        app:layout_constraintLeft_toRightOf="@+id/capture"
-        android:layout_marginLeft="8dp" />
+        app:srcCompat="@drawable/upload_icon" />
 
 
 </android.support.constraint.ConstraintLayout>

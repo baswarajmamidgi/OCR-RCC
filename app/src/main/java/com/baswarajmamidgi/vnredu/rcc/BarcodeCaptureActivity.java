@@ -25,12 +25,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -40,6 +45,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,10 +57,20 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 
 /**
  * Activity for the multi-tracker app.  This app detects barcodes and displays the value with the
@@ -66,6 +82,8 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
 
     // intent request code to handle updating play services if needed.
     private static final int RC_HANDLE_GMS = 9001;
+    private static final int gallery=12;
+
 
     // permission request codes need to be < 256
     private static final int RC_HANDLE_CAMERA_PERM = 2;
@@ -88,6 +106,9 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
 
     private SoundPool soundPool;
 
+    private byte[] inputData;
+
+
     /**
      * Initializes the UI and creates the detector pipeline.
      */
@@ -95,15 +116,11 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.barcode_capture);
-        barcodetext = (TextView) findViewById(R.id.barcodetext);
+        barcodetext = (TextView) findViewById(R.id.barcodedata);
 
         mPreview = (CameraSourcePreview) findViewById(R.id.preview);
 
-
         mGraphicOverlay= (GraphicOverlay<BarcodeGraphic>) findViewById(R.id.graphicOverlay);
-
-
-
 
         // read parameters from the intent used to launch the activity.
         boolean autoFocus = true;
@@ -121,7 +138,143 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
         gestureDetector = new GestureDetector(this, new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
+        FloatingActionButton barcode= (FloatingActionButton) findViewById(R.id.uploadfile);
+        barcode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String type="*/*";
+
+                Intent i=new Intent(Intent.ACTION_GET_CONTENT);
+                i.setType(type);
+                startActivityForResult(Intent.createChooser(i,"select file") ,gallery);
+            }
+        });
+
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == gallery && resultCode == RESULT_OK && data != null) {
+            Uri uri = data.getData();
+            InputStream iStream = null;
+            try {
+                iStream = getContentResolver().openInputStream(uri);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            try {
+                inputData = getBytes(iStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+            if (pictureFile == null) {
+                Log.d(TAG, "Error creating media file, check storage permissions: ");
+                return;
+            }
+
+            try {
+                FileOutputStream fos = new FileOutputStream(pictureFile);
+                fos.write(inputData);
+                Log.i("log", "file saved");
+                fos.close();
+            } catch (FileNotFoundException e) {
+                Log.d(TAG, "File not found: " + e.getMessage());
+            } catch (IOException e) {
+                Log.d(TAG, "Error accessing file: " + e.getMessage());
+            }
+
+            if (data != null) {
+                Log.i("log", "data send called");
+                Log.i("log", pictureFile.toString());
+
+                extractBarcodeData(pictureFile.toString());
+
+
+
+            }
+        }
+    }
+
+    public void extractBarcodeData(String path)
+    {
+
+        Bitmap myBitmap = BitmapFactory.decodeFile(path);
+        Frame frame = new Frame.Builder().setBitmap(myBitmap).build();
+        SparseArray<Barcode> barcodes = barcodeDetector.detect(frame);
+
+        String barcode_data=barcodes.valueAt(0).displayValue;
+
+        barcodetext.setText(barcode_data);     // Update the TextView
+        Log.i("log",barcode_data);
+
+        if(URLUtil.isValidUrl(barcode_data)){
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(barcode_data)));
+        }
+
+
+
+
+        MediaPlayer mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bleep);
+        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.release();
+            }
+        });
+        mPlayer.start();
+    }
+
+
+
+    public byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
+    }
+
+
+    private static File getOutputMediaFile(int type) {
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "rcc");
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.d("rcc", "failed to create directory");
+                return null;
+            }
+        }
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile;
+        if (type == MEDIA_TYPE_IMAGE){
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "IMAGE" + ".jpg");
+        }  else {
+            return null;
+        }
+
+        return mediaFile;
+    }
+
+
 
     private void requestCameraPermission() {
         Log.w(TAG, "Camera permission is not granted. Requesting permission");
@@ -189,11 +342,19 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
                 if (barcodes.size() != 0) {
                     barcodetext.post(new Runnable() {    // Use the post method of the TextView
                         public void run() {
-                            barcodetext.setText(    // Update the TextView
-                                    barcodes.valueAt(0).displayValue);
+                            String barcode_data=barcodes.valueAt(0).displayValue;
+
+                            barcodetext.setText(barcode_data);     // Update the TextView
+                            Log.i("log",barcode_data);
+
+                            if(URLUtil.isValidUrl(barcode_data)){
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(barcode_data)));
+                            }
 
 
-                                    MediaPlayer mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bleep);
+
+
+                            MediaPlayer mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bleep);
                             mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 
                                 @Override
@@ -268,12 +429,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
         centerTracker.setImageResource(R.drawable.barcodesquare);
         mGraphicOverlay.setVisibility(View.VISIBLE);
 
-
-
-
     }
-
-
 
     /**
      * Stops the camera.
@@ -354,6 +510,8 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
      * (e.g., because onResume was called before the camera source was created), this will be called
      * again when the camera source is created.
      */
+
+
     private void startCameraSource() throws SecurityException {
         // check that the device has play services available.
         int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(

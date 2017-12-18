@@ -47,7 +47,7 @@ public class OCRApp extends Application {
 
     }
 
-    public static final List<Record> getDemoData() {
+    public static final List<Record> getData() {
         return new ArrayList<Record>(demoData);
     }
 

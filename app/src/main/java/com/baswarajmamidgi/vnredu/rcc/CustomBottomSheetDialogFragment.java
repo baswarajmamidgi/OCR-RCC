@@ -7,11 +7,13 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 
-public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment {
+public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment{
 
     private String Blocks;
 
@@ -56,4 +58,6 @@ public class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment {
 
 
     }
+
+
 }

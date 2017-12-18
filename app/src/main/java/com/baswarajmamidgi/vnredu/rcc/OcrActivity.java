@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -16,6 +17,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -31,11 +33,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,7 +61,6 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashSet;
 
 public class OcrActivity extends AppCompatActivity  implements GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener,View.OnClickListener {
     private TextRecognizer textRecognizer;
@@ -70,14 +69,16 @@ public class OcrActivity extends AppCompatActivity  implements GoogleApiClient.C
     private Dialog dialog;
     private GridView gridView;
     private String toolbartitle;
+    TextView text_blocks;
     private Bitmap originalbitmap;
     private ArrayList<String> wordsarray = new ArrayList<>();
     private GoogleApiClient mGoogleApiClient;
-    private static final String TAG = "drive-quickstart";
+    private static final String TAG = "log";
     private static final int REQUEST_CODE_RESOLUTION = 3;
     private ArrayAdapter<String> arrayAdapter;
     private String blocks = "";
     private EditText recordname;
+    private Dialog edittext_dialog;
 
 
     @Override
@@ -86,25 +87,40 @@ public class OcrActivity extends AppCompatActivity  implements GoogleApiClient.C
         setContentView(R.layout.activity_ocr);
         ImageView photoView = (ImageView) findViewById(R.id.photo_view);
         FloatingActionButton retake = (FloatingActionButton) findViewById(R.id.retake);
+        retake.setOnClickListener(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         Intent i = getIntent(); //receive data from camera activity
         path = i.getStringExtra("data");
         originalbitmap = BitmapFactory.decodeFile(path);
         bitmap = decodeSampledBitmapFromFiles(path, 200, 200);
+
         dialog = new Dialog(OcrActivity.this);
         dialog.setContentView(R.layout.dialog);
         dialog.setTitle("Save as...");
         recordname = (EditText) dialog.findViewById(R.id.editname);
+
+
+        text_blocks= (TextView) findViewById(R.id.text_blocks);
         toolbartitle = "Image-" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime()) + ".jpg";
         recordname.setText(toolbartitle);
         getSupportActionBar().setTitle(toolbartitle);
-        TextView cancel = (TextView) dialog.findViewById(R.id.cancel);
+
+        final TextView cancel = (TextView) dialog.findViewById(R.id.cancel);
+        cancel.setOnClickListener(this);
+
         TextView savefile = (TextView) dialog.findViewById(R.id.updatename);
+        savefile.setOnClickListener(this);
+
+
+
         gridView = (GridView) findViewById(R.id.gridview);
         registerForContextMenu(gridView);
         textRecognizer = new TextRecognizer.Builder(this).build();
         photoView.setImageBitmap(bitmap);
+        photoView.setOnClickListener(this);
 
         if (!textRecognizer.isOperational()) {
             // Note: The first time that an app using a Vision API is installed on a
@@ -128,49 +144,80 @@ public class OcrActivity extends AppCompatActivity  implements GoogleApiClient.C
         }
 
         processImage(originalbitmap);  //extracts text from the image
-        retake.setOnClickListener(this);
-        ImageView saveimage = (ImageView) findViewById(R.id.saveimage);
-        ImageView share = (ImageView) findViewById(R.id.share);
-        share.setOnClickListener(this);
-        ImageView upload = (ImageView) findViewById(R.id.upload);
-        upload.setOnClickListener(this);
-        saveimage.setOnClickListener(this);
-        savefile.setOnClickListener(this);
-        cancel.setOnClickListener(this);
-        ImageView showModalBottomSheet = (ImageView) findViewById(R.id.editdata);
-        showModalBottomSheet.setOnClickListener(this);
-
-        LinearLayout linear= (LinearLayout) findViewById(R.id.saveimage1);
-        linear.setOnClickListener(this);
-        LinearLayout linear2= (LinearLayout) findViewById(R.id.editdata1);
-        linear2.setOnClickListener(this);
-
-        LinearLayout linear3= (LinearLayout) findViewById(R.id.makepdf1);
-        linear3.setOnClickListener(this);
-
-        LinearLayout linear4= (LinearLayout) findViewById(R.id.share1);
-        linear4.setOnClickListener(this);
-
-        LinearLayout linear5= (LinearLayout) findViewById(R.id.upload1);
-        linear5.setOnClickListener(this);
 
 
-    }
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.saveas:
+                        dialog.show();
+                        break;
+
+                    case R.id.edit_text:
+                        /*Bundle args = new Bundle();
+                        args.putString("blocks", blocks);
+
+                        //Initializing a bottom sheet
+                        BottomSheetDialogFragment bottomSheetDialogFragment = new CustomBottomSheetDialogFragment();
+                        bottomSheetDialogFragment.setArguments(args);
+                        bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
+
+                        */
+
+                        edittext_dialog  = new Dialog(OcrActivity.this,R.style.Theme_Dialog);
+                        edittext_dialog.setContentView(R.layout.dialog_edittext);
+                        final EditText editText = (EditText) edittext_dialog.findViewById(R.id.edit_text);
+
+                        editText.setText(blocks);
+                        //edittext_dialog.setTitle("Edi");
+                        edittext_dialog.show();
+
+                        TextView save_edittext = (TextView) edittext_dialog.findViewById(R.id.save_edittext);
+                        save_edittext.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                String data=editText.getText().toString();
+                                blocks=data;
+                                text_blocks.setText(blocks);
+                                edittext_dialog.dismiss();
+                            }
+                        });
+                        TextView cancel_edittext = (TextView) edittext_dialog.findViewById(R.id.cancel_edittext);
+                        cancel_edittext.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                edittext_dialog.dismiss();
+
+                            }
+                        });
+
+
+                        break;
+                    case R.id.make_pdf:
+                        stringtopdf(blocks);
+                        Toast.makeText(OcrActivity.this, "PDF created", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.share:
+                        sharepdf();
+                        break;
+                    case R.id.upload:
+                        saveFileToDrive();
+                        break;
+                }
+                return true;
+            }
+            });
+        }
+
+
+
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.editdata1:
-                {
-                Bundle args = new Bundle();
-                args.putString("blocks", blocks);
-
-                //Initializing a bottom sheet
-                BottomSheetDialogFragment bottomSheetDialogFragment = new CustomBottomSheetDialogFragment();
-                bottomSheetDialogFragment.setArguments(args);
-                bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
-                break;
-                }
 
             case R.id.photo_view: {
                 final Dialog dialog = new Dialog(OcrActivity.this, R.style.Theme_Dialog);
@@ -185,37 +232,17 @@ public class OcrActivity extends AppCompatActivity  implements GoogleApiClient.C
                         dialog.dismiss();
                     }
                 });
-            }
-
-                case R.id.retake:
-                {
-                    startActivity(new Intent(OcrActivity.this, ImageCapture.class));
-                    finish();
-                    break;
-                }
-            case R.id.share1:
-            {
-                sharepdf();
-                break;
-
-            }
-            case R.id.upload1:
-            {
-                saveFileToDrive();
-                break;
-            }
-            case R.id.saveimage1:
-            {
-                dialog.show();
                 break;
             }
 
-            case R.id.makepdf1:
+            case R.id.retake:
             {
-                stringtopdf(blocks);
-                Toast.makeText(this, "PDF created", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(OcrActivity.this, ImageCapture.class));
+                finish();
                 break;
             }
+
+
             case R.id.updatename:
             {
                 try {
@@ -237,6 +264,7 @@ public class OcrActivity extends AppCompatActivity  implements GoogleApiClient.C
               dialog.dismiss();
                 break;
             }
+
         }
         }
 
@@ -306,8 +334,8 @@ public class OcrActivity extends AppCompatActivity  implements GoogleApiClient.C
             Log.i("log", e.getLocalizedMessage());
         }
 
-        stringtopdf(blocks);
 
+        /*
         HashSet<String> hashSet = new HashSet<String>();
         hashSet.addAll(wordsarray);
         wordsarray.clear();                             //removes duplicates in array
@@ -315,6 +343,8 @@ public class OcrActivity extends AppCompatActivity  implements GoogleApiClient.C
         arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, wordsarray);
 
         gridView.setAdapter(arrayAdapter);
+        */
+        text_blocks.setText(blocks);
 
 
     }
@@ -482,7 +512,7 @@ public class OcrActivity extends AppCompatActivity  implements GoogleApiClient.C
     }
 
     private void sharepdf() {
-        File file = stringtopdf("hello there");
+        File file = stringtopdf(blocks);
 
         Intent sharefile = new Intent(Intent.ACTION_SEND);
         sharefile.setType("application/pdf");
@@ -545,7 +575,7 @@ public class OcrActivity extends AppCompatActivity  implements GoogleApiClient.C
         }
         mGoogleApiClient.connect();
 
-        final File file = stringtopdf("hello world");
+        final File file = stringtopdf(blocks);
         // Start by creating a new contents, and setting a callback.
         Log.i(TAG, "Creating new contents.");
         final Bitmap image = bitmap;

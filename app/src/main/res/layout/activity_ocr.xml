@@ -13,25 +13,55 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme" />
+        android:theme="@style/toolbartheme" />
+
 
     <ImageView
         android:id="@+id/photo_view"
         android:layout_width="228dp"
-        android:layout_height="200dp"
+        android:layout_height="180dp"
         android:layout_marginLeft="100dp"
-        android:layout_marginTop="4dp"/>
+        android:layout_marginTop="4dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/wallet_bright_foreground_disabled_holo_light"
+        android:visibility="visible" />
 
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="533dp">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/retake"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="340dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="270dp"
+            android:clickable="true"
+            app:backgroundTint="@color/colorPrimary"
+            app:fabSize="mini"
+            app:srcCompat="@android:drawable/ic_input_add" />
+
+
+        <TextView
+            android:id="@+id/text_blocks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="14dp"
+            android:autoLink="none|web|email|phone|all"
+            android:text="TextView"
+            android:textColor="@android:color/black" />
 
         <GridView
             android:id="@+id/gridview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:background="@drawable/gridview_border"
             android:gravity="left"
             android:horizontalSpacing="2dp"
             android:numColumns="3"
@@ -39,22 +69,24 @@
 
             android:verticalSpacing="5dp" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/retake"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:layout_marginLeft="340dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="280dp"
-            android:clickable="true"
-            app:fabSize="mini"
-            app:srcCompat="@android:drawable/ic_input_add"/>
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/navigation"
 
-        <include
-            layout="@layout/bottomtoolbar"
             android:layout_width="match_parent"
-            android:layout_height="73dp"
-            android:layout_marginTop="340dp" />
+            android:layout_height="60dp"
+            android:layout_marginBottom="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="360dp"
+            android:background="?android:attr/windowBackground"
+            android:baselineAligned="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:menu="@menu/navigation" />
+
     </FrameLayout>
+
+
 
 </LinearLayout>

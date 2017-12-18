@@ -21,6 +21,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,8 +36,7 @@ import java.util.List;
 
 import static android.view.GestureDetector.SimpleOnGestureListener;
 
-public class HomeActivity
-        extends Activity
+public class HomeActivity extends Activity
         implements RecyclerView.OnItemTouchListener,
         View.OnClickListener,
         ActionMode.Callback,NavigationView.OnNavigationItemSelectedListener {
@@ -46,9 +46,12 @@ public class HomeActivity
     int itemCount;
     GestureDetectorCompat gestureDetector;
     ActionMode actionMode;
-    FloatingActionButton fab;
+    FloatingActionButton ocr;
+    FloatingActionButton barcode;
+
     Context mContext;
     boolean doubleBackToExitPressedOnce = false;
+
 
 
     @Override
@@ -59,9 +62,12 @@ public class HomeActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("RCC");
 
+        barcode= (FloatingActionButton) findViewById(R.id.barcode);
+        barcode.setOnClickListener(this);
 
+        ocr = (FloatingActionButton) findViewById(R.id.camera);
+        ocr.setOnClickListener(this);
 
-        fab = (FloatingActionButton) findViewById(R.id.camera);
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -73,7 +79,8 @@ public class HomeActivity
         // allows for optimizations if all items are of the same size:
         recyclerView.setHasFixedSize(true);
 
-        List<Record> items = OCRApp.getDemoData();
+        List<Record> items = OCRApp.getData();
+        Log.i("log", String.valueOf(items.size()));
         adapter = new RecyclerViewAdapter(items,HomeActivity.this);
         recyclerView.setAdapter(adapter);
 
@@ -93,9 +100,6 @@ public class HomeActivity
         gestureDetector =
                 new GestureDetectorCompat(this, new RecyclerViewDemoOnGestureListener());
 
-        // fab
-        View fab = findViewById(R.id.camera);
-        fab.setOnClickListener(this);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -125,6 +129,16 @@ public class HomeActivity
         if (view.getId() == R.id.camera) {
             Intent i=new Intent(HomeActivity.this,ImageCapture.class);
             startActivity(i);
+        }
+
+        if(view.getId()==R.id.barcode)
+        {
+            barcode.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(HomeActivity.this,BarcodeCaptureActivity.class));
+                }
+            });
         }
         else if (view.getId() == R.id.recordcard) {
             // item click
@@ -170,7 +184,8 @@ public class HomeActivity
         // Inflate a menu resource providing context menu items
         MenuInflater inflater = actionMode.getMenuInflater();
         inflater.inflate(R.menu.context_actionbar_menu, menu);
-        fab.setVisibility(View.GONE);
+        ocr.setVisibility(View.GONE);
+        barcode.setVisibility(View.GONE);
         return true;
     }
 
@@ -189,7 +204,7 @@ public class HomeActivity
                 for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
                     currPos = selectedItemPositions.get(i);
 
-                    File file = new File(OCRApp.getDemoData().get(currPos).pathToImage);
+                    File file = new File(OCRApp.getData().get(currPos).pathToImage);
 
                     if (file.exists()) {
                         if (file.delete()) {
@@ -215,7 +230,7 @@ public class HomeActivity
                 int currPos;
                 for (int j = selectedItemPositions.size() - 1; j >= 0; j--) {
                     currPos = selectedItemPositions.get(j);
-                    File file=new File(OCRApp.getDemoData().get(currPos).pathToImage);
+                    File file=new File(OCRApp.getData().get(currPos).pathToImage);
                     Uri uri = Uri.fromFile(file);
                     files.add(uri);
                 }
@@ -241,7 +256,9 @@ public class HomeActivity
     public void onDestroyActionMode(ActionMode actionMode) {
         this.actionMode = null;
         adapter.clearSelections();
-        fab.setVisibility(View.VISIBLE);
+        ocr.setVisibility(View.VISIBLE);
+        barcode.setVisibility(View.VISIBLE);
+
     }
 
     @Override

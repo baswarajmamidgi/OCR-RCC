@@ -22,13 +22,18 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -53,10 +58,13 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -75,6 +83,8 @@ public final class ImageCapture extends AppCompatActivity {
     public static final String AutoFocus = "AutoFocus";
     public static final String UseFlash = "UseFlash";
     public static final String TextBlockObject = "String";
+    private static final int gallery=12;
+
 
     private CameraSource mCameraSource;
     private CameraSourcePreview mPreview;
@@ -95,6 +105,7 @@ public final class ImageCapture extends AppCompatActivity {
     };
     private int mCurrentFlash;
     private ProgressDialog progressDialog;
+    private byte[] inputData;
 
 
 
@@ -139,11 +150,16 @@ public final class ImageCapture extends AppCompatActivity {
 
 
         FloatingActionButton capture= (FloatingActionButton) findViewById(R.id.capture);
-        FloatingActionButton barcode= (FloatingActionButton) findViewById(R.id.barcode);
+        FloatingActionButton barcode= (FloatingActionButton) findViewById(R.id.uploadfile);
         barcode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ImageCapture.this,BarcodeCaptureActivity.class));
+
+                String type="*/*";
+
+             Intent i=new Intent(Intent.ACTION_GET_CONTENT);
+              i.setType(type);
+             startActivityForResult(Intent.createChooser(i,"select file") ,gallery);
             }
         });
         final CameraSource.ShutterCallback shutterCallback=new CameraSource.ShutterCallback() {
@@ -192,12 +208,77 @@ public final class ImageCapture extends AppCompatActivity {
                 mCameraSource.takePicture(shutterCallback,picturecallback);
                 progressDialog=new ProgressDialog(ImageCapture.this);
                 progressDialog.setMessage("Processing...");
-                progressDialog.show();
+                //progressDialog.show();
             }
         });
 
 
     }
+
+
+
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == gallery && resultCode == RESULT_OK && data != null) {
+            Uri uri = data.getData();
+            InputStream iStream = null;
+            try {
+                iStream = getContentResolver().openInputStream(uri);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            try {
+                 inputData = getBytes(iStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+            if (pictureFile == null) {
+                Log.d(TAG, "Error creating media file, check storage permissions: ");
+                return;
+            }
+
+            try {
+                FileOutputStream fos = new FileOutputStream(pictureFile);
+                fos.write(inputData);
+                Log.i("log", "file saved");
+                fos.close();
+            } catch (FileNotFoundException e) {
+                Log.d(TAG, "File not found: " + e.getMessage());
+            } catch (IOException e) {
+                Log.d(TAG, "Error accessing file: " + e.getMessage());
+            }
+
+            if (data != null) {
+                Log.i("log", "data send called");
+                Log.i("log", pictureFile.toString());
+
+                Intent intent = new Intent(ImageCapture.this, OcrActivity.class);
+                intent.putExtra("data", pictureFile.toString());
+                startActivity(intent);
+               
+
+
+            }
+        }
+    }
+    public byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
+    }
+
 
 
     @Override

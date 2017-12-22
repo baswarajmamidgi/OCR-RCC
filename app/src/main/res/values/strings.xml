@@ -36,6 +36,11 @@
     <string name="selected_count">%1$s selected</string>
     <string name="action_remove">Remove</string>
     <string name="action_add">Add</string>
+    <string name="shortcut_ocr_label">OCR</string>
+    <string name="shortcut_ocr_long_label">Optical Character Recognition</string>
+    <string name="shortcut_qr_label">QR/Barcode Scan</string>
+    <string name="shortcut_qr_long_label">QR/Barcode Reader</string>
+
 
 
 </resources>

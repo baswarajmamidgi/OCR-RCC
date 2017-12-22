@@ -29,18 +29,25 @@ public class OCRApp extends Application {
         File directory=new File(path);
         if(directory.exists()) {
             File[] files = directory.listFiles();
-            if (files.length > 0) {
-                for (int i = 0; i < files.length; i++) {
-                    Record model = new Record();
-                    DateTime dateTime = new DateTime();
-                    dateTime = dateTime.minusDays(r.nextInt(30));
-                    model.dateTime = dateTime.toDate();
-                    model.label = files[i].getName();
-                    model.pathToImage=files[i].getAbsolutePath();
+            try {
 
-                    demoData.add(model);
-                    demoMap.put(model.id, model);
+
+                if (files.length > 0) {
+                    for (int i = 0; i < files.length; i++) {
+                        Record model = new Record();
+                        DateTime dateTime = new DateTime();
+                        dateTime = dateTime.minusDays(r.nextInt(30));
+                        model.dateTime = dateTime.toDate();
+                        model.label = files[i].getName();
+                        model.pathToImage = files[i].getAbsolutePath();
+
+                        demoData.add(model);
+                        demoMap.put(model.id, model);
+                    }
                 }
+            }catch (Exception e)
+            {
+                e.getLocalizedMessage();
             }
         }
 

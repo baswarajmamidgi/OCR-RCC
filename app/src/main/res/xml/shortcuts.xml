@@ -1,0 +1,33 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="ocr"
+        android:enabled="true"
+        android:icon="@mipmap/ocr_icon_black"
+        android:shortcutShortLabel="@string/shortcut_ocr_label"
+        android:shortcutLongLabel="@string/shortcut_ocr_long_label"  >
+    <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.baswarajmamidgi.vnredu.rcc"
+            android:targetClass="com.baswarajmamidgi.vnredu.rcc.ImageCapture" />
+        <!-- If your shortcut is associated with multiple intents, include them
+             here. The last intent in the list determines what the user sees when
+             they launch this shortcut. -->
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="qr"
+        android:enabled="true"
+        android:icon="@mipmap/qr_icon_black"
+        android:shortcutShortLabel="@string/shortcut_qr_label"
+        android:shortcutLongLabel="@string/shortcut_qr_long_label"  >
+    <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.baswarajmamidgi.vnredu.rcc"
+            android:targetClass="com.baswarajmamidgi.vnredu.rcc.BarcodeCaptureActivity" />
+        <!-- If your shortcut is associated with multiple intents, include them
+             here. The last intent in the list determines what the user sees when
+             they launch this shortcut. -->
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+</shortcuts>

@@ -23,7 +23,7 @@
         android:layout_below="@+id/toolbar"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="45dp"
-        app:srcCompat="@drawable/barcode"
+        app:srcCompat="@drawable/ic_launcher"
         tools:ignore="ContentDescription" />
 
     <TextView
@@ -82,12 +82,12 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="RCC"
+        android:layout_alignStart="@+id/textView2"
+        android:layout_below="@+id/logo"
+        android:text="3R Reader"
         android:textColor="@color/statusbar"
         android:textSize="16sp"
-        android:textStyle="bold|italic"
-        android:layout_below="@+id/logo"
-        android:layout_alignStart="@+id/textView2" />
+        android:textStyle="bold|italic" />
 
 </RelativeLayout>
 

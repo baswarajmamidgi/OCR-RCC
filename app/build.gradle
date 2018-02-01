@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion '26.0.2'
     defaultConfig {
-        applicationId "com.baswarajmamidgi.vnredu.rcc"
+        applicationId "com.baswarajmamidgi.vnredu.threeRReader"
         minSdkVersion 21
         targetSdkVersion 25
         versionCode 1
@@ -13,10 +13,16 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            shrinkResources true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    defaultConfig {
+        multiDexEnabled true
+    }
+
 }
 
 dependencies {
@@ -34,6 +40,8 @@ dependencies {
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.google.android.gms:play-services:9.0.1'
     compile 'net.danlew:android.joda:2.4.0'
+    compile 'com.itextpdf:itextg:5.5.10'
+
 
 
 

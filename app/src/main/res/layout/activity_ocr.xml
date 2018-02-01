@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.baswarajmamidgi.vnredu.rcc.OcrActivity">
+    tools:context="com.baswarajmamidgi.vnredu.threeRReader.OcrActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -33,7 +33,8 @@
 
     <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="533dp">
+        android:layout_height="533dp"
+        android:scrollIndicators="right">
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/retake"

@@ -14,16 +14,16 @@
         android:layout_height="match_parent">
 
 
-        <com.baswarajmamidgi.vnredu.rcc.camerabarcode.CameraSourcePreview
+        <com.baswarajmamidgi.vnredu.threeRReader.camerabarcode.CameraSourcePreview
             android:id="@+id/preview"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.baswarajmamidgi.vnredu.rcc.camerabarcode.GraphicOverlay
+            <com.baswarajmamidgi.vnredu.threeRReader.camerabarcode.GraphicOverlay
                 android:id="@+id/graphicOverlay"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-        </com.baswarajmamidgi.vnredu.rcc.camerabarcode.CameraSourcePreview>
+        </com.baswarajmamidgi.vnredu.threeRReader.camerabarcode.CameraSourcePreview>
 
     <ImageView
         android:id="@+id/barcode_square"
@@ -75,7 +75,6 @@
             android:layout_alignTop="@+id/textView3"
             android:layout_marginStart="8dp"
             android:layout_marginTop="21dp"
-            android:text="TextView"
             android:textColor="@android:color/black" />
     </RelativeLayout>
 

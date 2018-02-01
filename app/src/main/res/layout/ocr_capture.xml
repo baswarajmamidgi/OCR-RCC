@@ -21,7 +21,7 @@
     android:background="@color/colorPrimary"
     tools:context=".ImageCapture">
 
-    <com.baswarajmamidgi.vnredu.rcc.camera.CameraSourcePreview
+    <com.baswarajmamidgi.vnredu.threeRReader.camera.CameraSourcePreview
         android:id="@+id/preview"
         android:layout_width="0dp"
         android:layout_height="0dp"

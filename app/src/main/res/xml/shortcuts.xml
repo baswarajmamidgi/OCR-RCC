@@ -7,8 +7,8 @@
         android:shortcutLongLabel="@string/shortcut_ocr_long_label"  >
     <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="com.baswarajmamidgi.vnredu.rcc"
-            android:targetClass="com.baswarajmamidgi.vnredu.rcc.ImageCapture" />
+            android:targetPackage="com.baswarajmamidgi.vnredu.threeRReader"
+            android:targetClass="com.baswarajmamidgi.vnredu.threeRReader.ImageCapture" />
         <!-- If your shortcut is associated with multiple intents, include them
              here. The last intent in the list determines what the user sees when
              they launch this shortcut. -->
@@ -22,8 +22,8 @@
         android:shortcutLongLabel="@string/shortcut_qr_long_label"  >
     <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="com.baswarajmamidgi.vnredu.rcc"
-            android:targetClass="com.baswarajmamidgi.vnredu.rcc.BarcodeCaptureActivity" />
+            android:targetPackage="com.baswarajmamidgi.vnredu.threeRReader"
+            android:targetClass="com.baswarajmamidgi.vnredu.threeRReader.BarcodeCaptureActivity" />
         <!-- If your shortcut is associated with multiple intents, include them
              here. The last intent in the list determines what the user sees when
              they launch this shortcut. -->

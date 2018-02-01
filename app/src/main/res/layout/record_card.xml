@@ -37,7 +37,7 @@
                 android:layout_marginRight="5dp"
                 android:layout_marginTop="5dp"
                 android:visibility="visible"
-                app:srcCompat="@drawable/barcode" />
+                app:srcCompat="@drawable/ic_launcher" />
 
             <TextView
                 android:id="@+id/filename"
